@@ -1,10 +1,9 @@
-# Sheet rasters, intermediates, and outputs are far too large for git. The
-# folders themselves are tracked (each holds a README explaining what goes in
-# it) but nothing inside them is.
-data/*
-!data/sheets/
-data/sheets/*
-!data/sheets/README.md
+# Sheet rasters, intermediates, and outputs are far too large for git, and the
+# data folder is yours alone - nothing under it is tracked. See docs/SHEETS.md
+# for what belongs there. work/ and output/ keep a README each, since the
+# scripts create those folders themselves.
+data/
+calibration/
 work/*
 !work/README.md
 output/*
@@ -20,6 +19,11 @@ output/*
 *.dbf
 *.prj
 *.cpg
+
+# Personal run scripts holding machine-specific paths
+*.local.cmd
+*.local.ps1
+*.local.sh
 
 # Python
 __pycache__/
