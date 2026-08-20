@@ -1,0 +1,15 @@
+{
+  "name": "Austin, Texas 1921",
+  "source": "University of Texas Libraries GeoData, sheets 50 and 68-97 (utlmaps__sfi__austin_tx_1921__1k__x__<n>.tif)",
+  "pattern": "utlmaps__sfi__austin_tx_1921*.tif",
+  "res": 0.10,
+  "classes": ["brick", "frame", "special", "iron_fireproof"],
+  "measured": {
+    "crs": "EPSG:3857",
+    "paper_hue_deg": 33.0,
+    "paper_saturation": 0.21,
+    "saturation_floor": 0.34,
+    "hue_route": true
+  },
+  "notes": "Cream-aged paper at saturation 0.21, so the hue route is on: pink brick measures 0.11 saturation, below the paper itself, and is found by hue instead. Adobe is excluded - Austin did not build in adobe, and with tinted paper the adobe rule reads the paper as a wash covering half the sheet. Sheets are in Web Mercator and are tiled rather than overlapping, so deduplication removes almost nothing. These sheet numbers are outer residential districts and come out ~96% frame; downtown brick is on the low-numbered sheets."
+}

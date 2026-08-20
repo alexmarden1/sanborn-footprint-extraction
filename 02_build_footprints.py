@@ -257,32 +257,45 @@ def write_layer(final, to_deg, out_dir, name):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--work-dir", default=config.WORK_DIR, type=Path)
-    ap.add_argument("--out-dir", default=config.OUT_DIR, type=Path)
-    ap.add_argument("--name", default=config.LAYER_NAME, help="output layer name")
-    ap.add_argument("--min-area", type=float, default=config.MIN_AREA_M2)
-    ap.add_argument("--min-hole", type=float, default=config.MIN_HOLE_M2)
-    ap.add_argument("--simplify", type=float, default=config.SIMPLIFY_M)
-    ap.add_argument("--dup-min", type=float, default=config.DUP_MIN)
-    ap.add_argument("--dup-iou", type=float, default=config.DUP_IOU)
-    ap.add_argument("--touch", type=float, default=config.TOUCH_M)
+    ap.add_argument("--work-dir", default=None, type=Path)
+    ap.add_argument("--out-dir", default=None, type=Path)
+    ap.add_argument("--name", default=None, help="output layer name")
+    ap.add_argument("--min-area", type=float, default=None)
+    ap.add_argument("--min-hole", type=float, default=None)
+    ap.add_argument("--simplify", type=float, default=None)
+    ap.add_argument("--dup-min", type=float, default=None)
+    ap.add_argument("--dup-iou", type=float, default=None)
+    ap.add_argument("--touch", type=float, default=None)
+    ap.add_argument("--profile", type=Path, default=None,
+                    help="JSON profile; explicit options still win")
     args = ap.parse_args()
 
-    recs, lat0, to_deg, n_sheets = load_candidates(args.work_dir, args.min_area)
+    prof = config.load_profile(args.profile)
+    pick = config.resolver(args, prof)
+    work_dir = Path(pick("work_dir", config.WORK_DIR))
+    out_dir = Path(pick("out_dir", config.OUT_DIR))
+    name = pick("name", None) or prof.get("name_prefix") or config.LAYER_NAME
+    min_area = float(pick("min_area", config.MIN_AREA_M2))
+    min_hole = float(pick("min_hole", config.MIN_HOLE_M2))
+    simplify = float(pick("simplify", config.SIMPLIFY_M))
+    dup_min = float(pick("dup_min", config.DUP_MIN))
+    dup_iou = float(pick("dup_iou", config.DUP_IOU))
+    touch = float(pick("touch", config.TOUCH_M))
+
+    recs, lat0, to_deg, n_sheets = load_candidates(work_dir, min_area)
     print(f"{n_sheets} sheets | {len(recs)} candidate polygons | "
           f"metric frame at lat {lat0:.4f}")
 
-    keep = dedupe(recs, args.dup_min, args.dup_iou)
+    keep = dedupe(recs, dup_min, dup_iou)
     print(f"after dedupe {len(keep)} | removed {len(recs) - len(keep)} "
           f"({100 * (len(recs) - len(keep)) / max(len(recs), 1):.0f}% were repeat traces)")
 
-    final, modes, n_holes = regularize_all(keep, args.min_area, args.min_hole,
-                                           args.simplify)
+    final, modes, n_holes = regularize_all(keep, min_area, min_hole, simplify)
     print(f"regularized: {modes.get(2, 0)} squared up, {modes.get(1, 0)} smoothed, "
           f"{modes.get(0, 0)} left as traced | {n_holes} text holes removed")
 
-    link_hosts(final, args.touch)
-    gj, n_vert, stem = write_layer(final, to_deg, args.out_dir, args.name)
+    link_hosts(final, touch)
+    gj, n_vert, stem = write_layer(final, to_deg, out_dir, name)
 
     n = len(final)
     props = [f["properties"] for f in gj["features"]]

@@ -1,0 +1,16 @@
+{
+  "name": "El Paso, Texas 1908",
+  "source": "University of Texas Libraries GeoData, 43 georeferenced sheets (utlmaps_<uuid>.tif)",
+  "pattern": "utlmaps_*.tif",
+  "skip_sheets": ["a93372bb"],
+  "res": 0.10,
+  "classes": ["brick", "frame", "adobe", "iron_fireproof", "special"],
+  "measured": {
+    "crs": "EPSG:4326",
+    "paper_hue_deg": 35.5,
+    "paper_saturation": 0.1,
+    "saturation_floor": 0.135,
+    "hue_route": false
+  },
+  "notes": "Near-neutral paper, so fills are found by saturation alone and the hue route stays off. All five materials appear; adobe is common in El Paso but is also the least reliable class, since it is a neutral wash. The skipped sheet is an oversized non-map plate. Sheets overlap heavily, so deduplication matters here."
+}

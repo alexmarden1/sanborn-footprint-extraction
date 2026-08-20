@@ -9,10 +9,50 @@ Environment overrides:
     SANBORN_WORK_DIR    folder for intermediate per-sheet JSON
     SANBORN_OUT_DIR     folder for the final GeoJSON + shapefile
 """
+import json
 import os
 from pathlib import Path
 
 REPO_DIR = Path(__file__).resolve().parent
+
+# Settings a profile may carry. Anything else in the file is treated as a note
+# for human readers (e.g. "name", "source", "measured", "notes").
+PROFILE_SETTINGS = {
+    "sheet_dir", "work_dir", "out_dir", "pattern", "skip_sheets", "name_prefix",
+    "res", "min_area", "min_split", "classes", "sat_k", "sat_floor",
+    "min_hole", "simplify", "dup_min", "dup_iou", "touch",
+}
+
+
+def load_profile(path):
+    """Read a JSON profile (as written by 00_calibrate.py). {} when path is None."""
+    if not path:
+        return {}
+    path = Path(path)
+    if not path.exists():
+        raise SystemExit(f"profile not found: {path}")
+    with open(path) as fh:
+        prof = json.load(fh)
+    stray = set(prof) - PROFILE_SETTINGS - {"name", "source", "measured", "notes"}
+    if stray:
+        print(f"warning: ignoring unknown key(s) in {path}: {sorted(stray)}")
+    return prof
+
+
+def resolver(args, profile):
+    """Precedence for a setting: command line, then profile, then this file.
+
+    Command-line options default to None precisely so that "not given" is
+    distinguishable from "given the same value as the default".
+    """
+    def pick(name, fallback):
+        given = getattr(args, name, None)
+        if given is not None:
+            return given
+        if name in profile and profile[name] is not None:
+            return profile[name]
+        return fallback
+    return pick
 
 
 def _path(env_var: str, default: Path) -> Path:
@@ -35,6 +75,13 @@ LAYER_NAME = "sanborn_footprints"
 # Filename substrings to ignore. The 1908 El Paso set includes one oversized
 # non-map sheet (an index/key plate) that traces into noise.
 SKIP_SHEETS = ["a93372bb"]
+
+# Materials this atlas actually uses. None means all five. Restricting the list
+# removes a whole category of false positives: `adobe` is a neutral wash, so it
+# is the class that overlaps with aged paper and grey line work, and a city that
+# never built in adobe is better off without it. 1921 Austin, for instance, wants
+# ["brick", "frame", "special", "iron_fireproof"].
+CLASSES_USED = None
 
 # ---------------------------------------------------------------- step 1: tracing
 # Resolution the sheets are resampled to before classification, in metres per
