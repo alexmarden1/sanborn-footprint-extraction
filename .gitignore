@@ -1,7 +1,16 @@
-# Input rasters and intermediates are large - keep them out of git
-data/
-work/
-output/
+# Sheet rasters, intermediates, and outputs are far too large for git. The
+# folders themselves are tracked (each holds a README explaining what goes in
+# it) but nothing inside them is.
+data/*
+!data/sheets/
+data/sheets/*
+!data/sheets/README.md
+work/*
+!work/README.md
+output/*
+!output/README.md
+
+# Belt and braces: these never belong in the repo, wherever they turn up.
 *.tif
 *.tif.aux.xml
 *.vrt
@@ -11,8 +20,6 @@ output/
 *.dbf
 *.prj
 *.cpg
-*.png
-*.jpg
 
 # Python
 __pycache__/

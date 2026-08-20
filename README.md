@@ -36,7 +36,7 @@ to tune the colour thresholds for your own scans (see
 ## Quickstart
 
 ```bash
-git clone https://github.com/<your-username>/sanborn-footprint-extraction.git
+git clone https://github.com/alexmarden1/sanborn-footprint-extraction.git
 cd sanborn-footprint-extraction
 
 python -m venv .venv
@@ -248,7 +248,15 @@ classify.py               Sanborn colour key -> material labels (+ preview tool)
 regularize.py             outline cleanup: despike, orthogonalize, smooth
 02_build_footprints.py    step 2: dedupe, regularize, link, write the layer
 requirements.txt
+
+data/sheets/              put your georeferenced sheet GeoTIFFs here
+work/                     per-sheet intermediates (auto-created, resumable)
+output/                   the finished GeoJSON + shapefile
 ```
+
+Those three folders each contain a README explaining what belongs in them. Their
+*contents* are never committed — see `.gitignore` — so cloning gives you the
+layout without the gigabytes.
 
 ## Requirements
 
