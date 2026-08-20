@@ -1,8 +1,10 @@
-# Sheet rasters, intermediates, and outputs are far too large for git, and the
-# data folder is yours alone - nothing under it is tracked. See docs/SHEETS.md
-# for what belongs there. work/ and output/ keep a README each, since the
-# scripts create those folders themselves.
-data/
+# Sheet rasters, intermediates, and outputs are far too large for git. Nothing
+# you put under data/ is tracked - only the empty folder itself, so that a fresh
+# clone has somewhere obvious to put sheets. See docs/SHEETS.md.
+data/*
+!data/sheets/
+data/sheets/*
+!data/sheets/.gitkeep
 calibration/
 work/*
 !work/README.md

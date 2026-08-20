@@ -179,7 +179,9 @@ def main():
 
     files = find_sheets(sheet_dir, pattern, skip)
     if not files:
-        sys.exit(f"no sheets matching {pattern} in {sheet_dir}")
+        sys.exit(f"no sheets matching '{pattern}' in {sheet_dir}\n"
+                 f"Put one georeferenced GeoTIFF per sheet there, or point at "
+                 f"them with --sheet-dir. See docs/SHEETS.md.")
     files = files[args.start:args.end]
     if args.limit:
         files = files[:args.limit]
